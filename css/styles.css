@@ -51,6 +51,10 @@ div {
 .game-board-spot {
     width: 100px;
     height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 84px;
 }
 
 .borderBR {

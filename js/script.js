@@ -7,13 +7,13 @@
     // create gameboard, open spots, valid placement
 
 const gameBoard = (() => {
-    const board = [];
+    const board = ['x','o','x','o','x','o','x','o','x']; // ...Array(9)
 
     const getBoard = () => board;
-    const getOpenSpots;
-    const getFilledSpots;
+    const getOpenSpots = () => {};
+    const getFilledSpots = () => {};
 
-    const setSpot;
+    const setSpot = () => {};
 
     return {getBoard, getFilledSpots, getOpenSpots, setSpot};
 })();
@@ -29,8 +29,8 @@ const player = (name, symbol) => {
     const getScore = () => score;
     const getPlayerTurn = () => playerTurn;
 
-    const setScore;
-    const setPlayerTurn;
+    const setScore = () => {};
+    const setPlayerTurn = () => {};
 
     return {getName, getPlayerTurn, getScore, getSymbol, setScore, setPlayerTurn};
 };
@@ -39,10 +39,10 @@ const player = (name, symbol) => {
 // game object
     // game logic, win logic, game message 
 const playGame = () => {
-    const init;
-    const checkWin;
-    const gameMessage;
-    const endGame;
+    const init = () => {};
+    const checkWin = () => {};
+    const gameMessage = () => {};
+    const endGame = () => {};
 
     return {init, checkWin, gameMessage};
 };
@@ -50,6 +50,17 @@ const playGame = () => {
 // display object
 
 const displayController = (() => {
+    const gameBoardGrid = document.querySelector('.game-board');
     
+    const drawBoard = () => {
+        gameBoard.getBoard().forEach( (spot, i) => {
+            if(spot) {
+                const gameBoardGridSpot = gameBoardGrid.children[i];
+                gameBoardGridSpot.textContent = spot;
+            }
+        });
+    };
+    return {drawBoard};
 })();
 
+displayController.drawBoard();
