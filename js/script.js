@@ -9,7 +9,7 @@
 const gameBoardGrid = document.querySelector('.game-board');
 
 const gameBoard = (() => {
-    const board = ['x','o','x','o','x','o','x','o','x']; // ...Array(9)
+    const board = ['x','o','x',,'x','o','x','o','x']; // ...Array(9)
 
     const getBoard = () => board;
     const getOpenSpots = () => {};
@@ -36,8 +36,10 @@ const player = (name, symbol) => {
 
     const pickSpot = () => {
         Array.from(gameBoardGrid.children).forEach(spot => {
+            if(!(spot.textContent)) {
             spot.addEventListener('click', selectSpot);
             spot.classList.add('hoverOnSpot');
+            }
         });
 
         function selectSpot() {
