@@ -1,0 +1,87 @@
+
+/* General Styles */
+
+html {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+*, 
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px black solid;
+}
+
+h1 {
+    padding: 0;
+    margin: 1em;
+}
+
+div {
+    padding: 0;
+    margin: 0;
+}
+
+/* Board Game Styles */
+
+.game-board {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: wrap;
+}
+
+.game-board-spot {
+    width: 100px;
+    height: 100px;
+}
+
+.borderBR {
+    border-right: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+.borderR {
+    border-right: 5px solid black;
+}
+
+.borderB {
+    border-bottom: 5px solid black;
+}
+
+/* Game Controls Styles */
+
+.game-controls {
+    margin-top: 1em;
+    width: 300px;
+    height: 25px;
+    border: 1px solid blue;
+    text-align: center;
+}
+
+/* Game Messages Styles */
+
+.game-messages {
+    margin-top: 1em;
+    width: 300px;
+    height: 25px;
+    border: 1px solid blue;
+    text-align: center;
+}
