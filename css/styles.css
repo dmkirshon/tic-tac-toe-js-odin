@@ -70,6 +70,10 @@ div {
     border-bottom: 5px solid black;
 }
 
+.hoverOnSpot:hover {
+    border: 5px solid grey;
+}
+
 /* Game Controls Styles */
 
 .game-controls {

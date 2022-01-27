@@ -6,6 +6,8 @@
 // gameboard object
     // create gameboard, open spots, valid placement
 
+const gameBoardGrid = document.querySelector('.game-board');
+
 const gameBoard = (() => {
     const board = ['x','o','x','o','x','o','x','o','x']; // ...Array(9)
 
@@ -13,7 +15,7 @@ const gameBoard = (() => {
     const getOpenSpots = () => {};
     const getFilledSpots = () => {};
 
-    const setSpot = () => {};
+    const setSpot = (symbol, location) => {board[location] = symbol};
 
     return {getBoard, getFilledSpots, getOpenSpots, setSpot};
 })();
@@ -32,7 +34,24 @@ const player = (name, symbol) => {
     const setScore = () => {};
     const setPlayerTurn = () => {};
 
-    return {getName, getPlayerTurn, getScore, getSymbol, setScore, setPlayerTurn};
+    const pickSpot = () => {
+        Array.from(gameBoardGrid.children).forEach(spot => {
+            spot.addEventListener('click', selectSpot);
+            spot.classList.add('hoverOnSpot');
+        });
+
+        function selectSpot() {
+            gameBoard.setSpot(symbol, this.getAttribute('data-spot-number'));
+            Array.from(gameBoardGrid.children).forEach(spot => {
+                spot.removeEventListener('click', selectSpot);
+                spot.classList.remove('hoverOnSpot');
+            });
+        };
+    };
+
+    return {getName, getPlayerTurn, getScore, getSymbol, 
+        setScore, setPlayerTurn, 
+        pickSpot};
 };
 
 
@@ -50,7 +69,6 @@ const playGame = () => {
 // display object
 
 const displayController = (() => {
-    const gameBoardGrid = document.querySelector('.game-board');
     
     const drawBoard = () => {
         gameBoard.getBoard().forEach( (spot, i) => {
@@ -64,3 +82,5 @@ const displayController = (() => {
 })();
 
 displayController.drawBoard();
+const playerOne = player('Player 1', 'x');
+playerOne.pickSpot();
