@@ -157,7 +157,7 @@ const displayController = (() => {
                 displayController.displayMessage(messageString);
             };
 
-        return {init, checkWin, gameMessage};
+        return {init};
     })();
 
 playGame.init();
