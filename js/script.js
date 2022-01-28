@@ -9,7 +9,7 @@
 const gameBoardGrid = document.querySelector('.game-board');
 
 const gameBoard = (() => {
-    const board = ['x','o','x',,'x','o','x','o','x']; // ...Array(9)
+    const board = [...Array(9)]
 
     const getBoard = () => board;
     const getOpenSpots = () => {};
@@ -32,40 +32,12 @@ const player = (name, symbol) => {
     const getPlayerTurn = () => playerTurn;
 
     const setScore = () => {};
-    const setPlayerTurn = () => {};
-
-    const pickSpot = () => {
-        Array.from(gameBoardGrid.children).forEach(spot => {
-            if(!(spot.textContent)) {
-            spot.addEventListener('click', selectSpot);
-            spot.classList.add('hoverOnSpot');
-            }
-        });
-
-        function selectSpot() {
-            gameBoard.setSpot(symbol, this.getAttribute('data-spot-number'));
-            Array.from(gameBoardGrid.children).forEach(spot => {
-                spot.removeEventListener('click', selectSpot);
-                spot.classList.remove('hoverOnSpot');
-            });
-        };
-    };
-
-    return {getName, getPlayerTurn, getScore, getSymbol, 
-        setScore, setPlayerTurn, 
-        pickSpot};
-};
+    const setPlayerTurn = (turn) => {playerTurn = turn};
 
 
-// game object
-    // game logic, win logic, game message 
-const playGame = () => {
-    const init = () => {};
-    const checkWin = () => {};
-    const gameMessage = () => {};
-    const endGame = () => {};
 
-    return {init, checkWin, gameMessage};
+    return {getName, getPlayerTurn, getScore, getSymbol,
+        setScore, setPlayerTurn};
 };
 
 // display object
@@ -80,9 +52,86 @@ const displayController = (() => {
             }
         });
     };
-    return {drawBoard};
+
+    const displayMessage = (message) => {
+        const messageArea = document.querySelector('.game-messages');
+        messageArea.textContent = message;
+    };
+    return {drawBoard, displayMessage};
 })();
 
-displayController.drawBoard();
-const playerOne = player('Player 1', 'x');
-playerOne.pickSpot();
+// game object
+    // game logic, win logic, game message 
+    const playGame = (() => {
+
+        displayController.drawBoard();
+        const playerOne = player('Player 1', 'x');
+        const playerTwo = player('Player 2', 'o');
+        let gameOver = false;
+    
+        const init = () => {
+            pickSpot(playerOne, playerTwo);
+        };
+
+        const pickSpot = (currentPlayer, otherPlayer) => {
+            const currentSymbol = currentPlayer.getSymbol();
+    
+            Array.from(gameBoardGrid.children).forEach(spot => {
+                if(!(spot.textContent)) {
+                spot.addEventListener('click', selectSpot);
+                spot.classList.add('hoverOnSpot');
+                }
+            });
+    
+            function selectSpot() {
+                gameBoard.setSpot(currentSymbol, this.getAttribute('data-spot-number'));
+                Array.from(gameBoardGrid.children).forEach(spot => {
+                    spot.removeEventListener('click', selectSpot);
+                    spot.classList.remove('hoverOnSpot');
+                });
+                displayController.drawBoard();
+
+                if(checkWin()){
+                    endGame(currentPlayer, otherPlayer);
+                }else{
+                    pickSpot(otherPlayer, currentPlayer);
+                }
+            };
+        };
+
+        const checkWin = () => {
+            const currentBoard = gameBoard.getBoard();
+            if((currentBoard[0] && currentBoard[0] === currentBoard[1] && currentBoard[1] === currentBoard[2]) ||
+            (currentBoard[0] && currentBoard[0] === currentBoard[3] && currentBoard[3] === currentBoard[6]) ||
+            (currentBoard[0] && currentBoard[0] === currentBoard[4] && currentBoard[4] === currentBoard[8]) ||
+            (currentBoard[1] && currentBoard[1] === currentBoard[4] && currentBoard[4] === currentBoard[7]) ||
+            (currentBoard[2] && currentBoard[2] === currentBoard[4] && currentBoard[4] === currentBoard[6]) ||
+            (currentBoard[2] && currentBoard[2] === currentBoard[5] && currentBoard[5] === currentBoard[8]) ||
+            (currentBoard[3] && currentBoard[3] === currentBoard[4] && currentBoard[4] === currentBoard[5]) ||
+            (currentBoard[6] && currentBoard[6] === currentBoard[7] && currentBoard[7] === currentBoard[8])) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        const gameMessage = (currentPlayer, otherPlayer) => {
+            let messageString = '';
+            if(gameOver) {
+                messageString = `You win ${currentPlayer.getName()}!
+                 The score is ${currentPlayer.getName()}: ${currentPlayer.getScore()}
+                 ${otherPlayer.getName()}: ${otherPlayer.getScore()}`;
+            }
+            displayController.displayMessage(messageString);
+        };
+        const endGame = (winner, loser) => {
+            gameOver = true;
+            const currentPlayerScore = winner.getScore();
+            winner.setScore(currentPlayerScore + 1);
+            gameMessage(winner, loser);
+        };
+    
+        return {init, checkWin, gameMessage};
+    })();
+
+playGame.init();
