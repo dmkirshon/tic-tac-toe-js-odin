@@ -31,13 +31,13 @@ const player = (name, symbol) => {
     const getScore = () => score;
     const getPlayerTurn = () => playerTurn;
 
-    const setScore = () => {};
+    const giveWinPoint = () => {score++};
     const setPlayerTurn = (turn) => {playerTurn = turn};
 
 
 
     return {getName, getPlayerTurn, getScore, getSymbol,
-        setScore, setPlayerTurn};
+        giveWinPoint, setPlayerTurn};
 };
 
 // display object
@@ -67,13 +67,16 @@ const displayController = (() => {
         displayController.drawBoard();
         const playerOne = player('Player 1', 'x');
         const playerTwo = player('Player 2', 'o');
+        let currentPlayer = playerOne;
+        let otherPlayer = playerTwo;
         let gameOver = false;
+        let gameOutcomeIsWin = false;
     
         const init = () => {
-            pickSpot(playerOne, playerTwo);
+            pickSpot();
         };
 
-        const pickSpot = (currentPlayer, otherPlayer) => {
+        const pickSpot = () => {
             const currentSymbol = currentPlayer.getSymbol();
     
             Array.from(gameBoardGrid.children).forEach(spot => {
@@ -92,9 +95,15 @@ const displayController = (() => {
                 displayController.drawBoard();
 
                 if(checkWin()){
-                    endGame(currentPlayer, otherPlayer);
-                }else{
-                    pickSpot(otherPlayer, currentPlayer);
+                    gameOutcomeIsWin = true;
+                    endGame();
+                } else if (checkTie()) {
+                    endGame();
+                } else{
+                    const swapPlayer = currentPlayer;
+                    currentPlayer = otherPlayer;
+                    otherPlayer = swapPlayer;
+                    pickSpot();
                 }
             };
         };
@@ -115,22 +124,39 @@ const displayController = (() => {
             }
         };
 
-        const gameMessage = (currentPlayer, otherPlayer) => {
-            let messageString = '';
-            if(gameOver) {
-                messageString = `You win ${currentPlayer.getName()}!
-                 The score is ${currentPlayer.getName()}: ${currentPlayer.getScore()}
-                 ${otherPlayer.getName()}: ${otherPlayer.getScore()}`;
+        const checkTie = () => {
+            const currentBoard = gameBoard.getBoard();
+            if (currentBoard.includes(undefined)) {
+                return false;
+            } else {
+                return true;
             }
-            displayController.displayMessage(messageString);
-        };
-        const endGame = (winner, loser) => {
+        }
+        
+        const endGame = () => {
             gameOver = true;
-            const currentPlayerScore = winner.getScore();
-            winner.setScore(currentPlayerScore + 1);
-            gameMessage(winner, loser);
+            if (gameOutcomeIsWin) {
+                currentPlayer.giveWinPoint();
+                gameMessage();
+            } else {
+                gameMessage();
+            }
         };
-    
+
+        const gameMessage = () => {
+                let messageString = '';
+                if(gameOver && gameOutcomeIsWin) {
+                    messageString = `You win ${currentPlayer.getName()}!
+                    The score is ${currentPlayer.getName()}: ${currentPlayer.getScore()}
+                    ${otherPlayer.getName()}: ${otherPlayer.getScore()}`;
+                } else {
+                    messageString = `The game is a tie!
+                    The score is ${currentPlayer.getName()}: ${currentPlayer.getScore()}
+                    ${otherPlayer.getName()}: ${otherPlayer.getScore()}`;
+                }
+                displayController.displayMessage(messageString);
+            };
+
         return {init, checkWin, gameMessage};
     })();
 
