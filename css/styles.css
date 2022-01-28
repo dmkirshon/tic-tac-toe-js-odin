@@ -71,7 +71,7 @@ div {
 }
 
 .hoverOnSpot:hover {
-    border: 5px solid grey;
+    background-color: grey;
 }
 
 /* Game Controls Styles */
@@ -82,10 +82,6 @@ div {
     text-align: center;
 }
 
-.player-names {
-    display: flex;
-}
-
 input {
     text-align: center;
     font-size: large;
@@ -94,8 +90,7 @@ input {
 
 .game-messages {
     margin-top: 1em;
-    width: 300px;
-    height: 25px;
     border: 1px solid blue;
     text-align: center;
+    white-space: pre-line;
 }

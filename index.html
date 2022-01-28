@@ -23,14 +23,15 @@
             <div class="game-board-spot spot8" data-spot-number="8"></div>
         </div>
         <div class="game-controls">
-            <button>Start Game</button>
-            <form class="player-names">
+            <form class="form-start-game">
                 <input type='text' id="playerOne" name="playerOne" 
                 placeholder="Player One, x" size="20" required>
                 <input type='text' id="playerTwo" name="playerTwo" 
-                placeholder="Player Two, o" size="20" required>
+                placeholder="Player Two, o" size="20" required><br>
+                <input type="submit" class="game-controls-start-game"
+                value="Start Game">
             </form>
-            <button>New Game</button>
+            <button hidden>New Game</button>
         </div>
         <div class="game-messages">Messages</div>
     </div>
