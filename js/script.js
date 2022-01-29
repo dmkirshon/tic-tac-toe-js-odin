@@ -46,11 +46,16 @@ const displayController = (() => {
     let inputPlayerOne;
     let inputPlayerTwo;
 
+    const playerOneProfile = document.querySelector('.playerOneProfile');
+    const playerTwoProfile = document.querySelector('.playerTwoProfile');
     const startGameForm = document.querySelector('.form-start-game');
+
     startGameForm.addEventListener('submit', (event) => {
         event.preventDefault();
         inputPlayerOne = document.getElementById('playerOne').value;
         inputPlayerTwo = document.getElementById('playerTwo').value;
+        playerOneProfile.textContent = inputPlayerOne + '\nx';
+        playerTwoProfile.textContent = inputPlayerTwo + '\no';
         startGameForm.reset();
         startGameForm.hidden = true;
         playGame.init();
@@ -65,6 +70,16 @@ const displayController = (() => {
         });
     };
 
+    const highlightPlayer = (currentPlayer) => {
+        if(currentPlayer.getSymbol() == 'x') {
+            playerTwoProfile.classList.remove('highlight-player');
+            playerOneProfile.classList.add('highlight-player');
+        } else {
+            playerOneProfile.classList.remove('highlight-player');
+            playerTwoProfile.classList.add('highlight-player');
+        }
+    };
+
     const displayMessage = (message) => {
         const messageArea = document.querySelector('.game-messages');
         messageArea.textContent = message;
@@ -73,7 +88,7 @@ const displayController = (() => {
     const getInputtedPlayerOne = () => inputPlayerOne;
     const getInputtedPlayerTwo = () => inputPlayerTwo;
 
-    return {drawBoard, displayMessage, getInputtedPlayerOne, getInputtedPlayerTwo};
+    return {drawBoard, displayMessage, getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer};
 })();
 
 // game object
@@ -94,6 +109,9 @@ const playGame = (() => {
 
     const pickSpot = () => {
         const currentSymbol = currentPlayer.getSymbol();
+
+
+        displayController.highlightPlayer(currentPlayer);
 
         Array.from(gameBoardGrid.children).forEach(spot => {
             if(!(spot.textContent)) {
