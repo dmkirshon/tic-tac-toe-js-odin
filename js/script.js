@@ -17,7 +17,11 @@ const gameBoard = (() => {
 
     const setSpot = (symbol, location) => { board[location] = symbol; };
 
-    return { getBoard, getFilledSpots, getOpenSpots, setSpot };
+    const resetGameBoard = () => {
+        board.forEach((spot, index) => {board[index] = undefined;});
+    };
+
+    return { getBoard, getFilledSpots, getOpenSpots, setSpot, resetGameBoard };
 })();
 
 // player objects
@@ -51,9 +55,11 @@ const displayController = (() => {
     let inputPlayerOne;
     let inputPlayerTwo;
 
+    const gameBoardGridSpots = document.querySelectorAll('.game-board-spot');
     const playerOneProfile = document.querySelector('.player-one-profile');
     const playerTwoProfile = document.querySelector('.player-two-profile');
     const startGameForm = document.querySelector('.form-start-game');
+    const newGameButton = document.querySelector('.game-controls-new');
 
     startGameForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -67,7 +73,7 @@ const displayController = (() => {
     const drawBoard = () => {
         gameBoard.getBoard().forEach((spot, i) => {
             if (spot) {
-                const gameBoardGridSpot = gameBoardGrid.children[i];
+                const gameBoardGridSpot = gameBoardGridSpots[i];
                 gameBoardGridSpot.textContent = spot;
             }
         });
@@ -120,9 +126,22 @@ const displayController = (() => {
         }
     };
 
+    // reset game 
+
+    newGameButton.addEventListener('click', () => playGame.newGame());
+
+    const displayNewGameOptions = () => newGameButton.hidden = false;
+
+    const hideNewGameOptions = () => newGameButton.hidden = true;
+
+
+    const resetDisplayBoard = () => {
+        gameBoardGridSpots.forEach(gridSpot => {gridSpot.textContent = '';})
+    };
+
     return {
-        drawBoard, displayName, displayScore, displaySymbol, displayMessage,
-        getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer
+        drawBoard, displayName, displayScore, displaySymbol, displayMessage, displayNewGameOptions,
+        getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, resetDisplayBoard, hideNewGameOptions
     };
 })();
 
@@ -225,6 +244,7 @@ const playGame = (() => {
         } else {
             gameMessage();
         }
+        displayController.displayNewGameOptions();
     };
 
     const gameMessage = () => {
@@ -239,8 +259,20 @@ const playGame = (() => {
         displayController.displayMessage(messageString);
     };
 
+    const newGame = () => {
+        gameOver = false;
+        gameOutcomeIsWin = false;
+        currentPlayer = playerOne;
+        otherPlayer = playerTwo;
+        gameBoard.resetGameBoard();
+        displayController.resetDisplayBoard();
+        displayController.displayMessage('');
+        displayController.hideNewGameOptions();
+        pickSpot();
+    };
+
     const getPlayerOne = () => playerOne;
     const getPlayerTwo = () => playerTwo;
 
-    return { init, getPlayerOne, getPlayerTwo };
+    return { init, getPlayerOne, getPlayerTwo, newGame};
 })();
