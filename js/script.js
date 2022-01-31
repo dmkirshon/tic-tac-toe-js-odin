@@ -60,6 +60,7 @@ const displayController = (() => {
     const playerTwoProfile = document.querySelector('.player-two-profile');
     const startGameForm = document.querySelector('.form-start-game');
     const newGameButton = document.querySelector('.game-controls-new');
+    const resetGameButton = document.querySelector('.game-controls-reset');
 
     startGameForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -79,25 +80,39 @@ const displayController = (() => {
         });
     };
 
-    const displayName = (playerName, player) => {
+    const displayPlayerProfile = (player) => {
+        const playerProfile = grabPlayerProfile(player);
+        playerProfile.hidden = false;
+
+        displayName(player);
+        displaySymbol(player);
+        displayScore(player);
+    };
+
+    const hidePlayerProfile = (player) => {
+        const playerProfile = grabPlayerProfile(player);
+        playerProfile.hidden = true;
+    }
+
+    const displayName = (player) => {
         const playerProfile = grabPlayerProfile(player);
 
         const playerProfileName = playerProfile.querySelector('.player-profile-name');
-        playerProfileName.textContent = playerName;
+        playerProfileName.textContent = player.getName();
     };
 
-    const displayScore = (playerScore, player) => {
+    const displayScore = (player) => {
         const playerProfile = grabPlayerProfile(player);
 
         const playerProfileScore = playerProfile.querySelector('.player-profile-score');
-        playerProfileScore.textContent = `Score: ${playerScore}`;
+        playerProfileScore.textContent = `Score: ${player.getScore()}`;
     };
 
-    const displaySymbol = (playerSymbol, player) => {
+    const displaySymbol = (player) => {
         const playerProfile = grabPlayerProfile(player);
 
         const playerProfileSymbol = playerProfile.querySelector('.player-profile-symbol');
-        playerProfileSymbol.textContent = playerSymbol;
+        playerProfileSymbol.textContent = player.getSymbol();
     };
 
     const highlightPlayer = (currentPlayer) => {
@@ -129,19 +144,37 @@ const displayController = (() => {
     // reset game 
 
     newGameButton.addEventListener('click', () => playGame.newGame());
+    resetGameButton.addEventListener('click', () => playGame.resetGame());
 
     const displayNewGameOptions = () => newGameButton.hidden = false;
+    const displayResetGameOptions = () => resetGameButton.hidden = false;
 
-    const hideNewGameOptions = () => newGameButton.hidden = true;
-
+    const hideGameOptions = () => {
+        newGameButton.hidden = true;
+        resetGameButton.hidden = true;
+    };
 
     const resetDisplayBoard = () => {
         gameBoardGridSpots.forEach(gridSpot => {gridSpot.textContent = '';})
     };
 
+    const showStartGameForm = () => {
+        startGameForm.hidden = false;
+    }
+
+    const hidePlayerProfiles = () => {
+        Array.from(playerOneProfile.children)
+            .forEach(profileData => profileData.textContent = '');
+        Array.from(playerTwoProfile.children)
+            .forEach(profileData => profileData.textContent = '');
+    }
+
     return {
-        drawBoard, displayName, displayScore, displaySymbol, displayMessage, displayNewGameOptions,
-        getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, resetDisplayBoard, hideNewGameOptions
+        drawBoard, displayName, displayScore, displaySymbol, displayMessage, 
+         getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, 
+        resetDisplayBoard, displayNewGameOptions, 
+        displayResetGameOptions, hideGameOptions, showStartGameForm,
+        displayPlayerProfile, hidePlayerProfile
     };
 })();
 
@@ -166,12 +199,8 @@ const playGame = (() => {
         playerOne = player(playerOneName, playerOneSymbol, playerOnePosition);
         playerTwo = player(playerTwoName, playerTwoSymbol, playerTwoPosition);
 
-        displayController.displayName(playerOneName, playerOne);
-        displayController.displayName(playerTwoName, playerTwo);
-        displayController.displaySymbol(playerOneSymbol, playerOne);
-        displayController.displaySymbol(playerTwoSymbol, playerTwo);
-        displayController.displayScore(playerOne.getScore(), playerOne);
-        displayController.displayScore(playerTwo.getScore(), playerTwo);
+        displayController.displayPlayerProfile(playerOne);
+        displayController.displayPlayerProfile(playerTwo);
 
         currentPlayer = playerOne;
         otherPlayer = playerTwo;
@@ -239,12 +268,13 @@ const playGame = (() => {
         gameOver = true;
         if (gameOutcomeIsWin) {
             const currentPlayerScore = currentPlayer.giveWinPoint();
-            displayController.displayScore(currentPlayerScore, currentPlayer);
+            displayController.displayScore(currentPlayer);
             gameMessage();
         } else {
             gameMessage();
         }
         displayController.displayNewGameOptions();
+        displayController.displayResetGameOptions();
     };
 
     const gameMessage = () => {
@@ -264,15 +294,29 @@ const playGame = (() => {
         gameOutcomeIsWin = false;
         currentPlayer = playerOne;
         otherPlayer = playerTwo;
+
         gameBoard.resetGameBoard();
         displayController.resetDisplayBoard();
         displayController.displayMessage('');
-        displayController.hideNewGameOptions();
+        displayController.hideGameOptions();
         pickSpot();
     };
+
+    const resetGame = () => {
+        gameOver = false;
+        gameOutcomeIsWin = false;
+        
+        gameBoard.resetGameBoard();
+        displayController.resetDisplayBoard();
+        displayController.displayMessage('');
+        displayController.hideGameOptions();
+        displayController.hidePlayerProfile(playerOne);
+        displayController.hidePlayerProfile(playerTwo);
+        displayController.showStartGameForm();
+    }
 
     const getPlayerOne = () => playerOne;
     const getPlayerTwo = () => playerTwo;
 
-    return { init, getPlayerOne, getPlayerTwo, newGame};
+    return { init, getPlayerOne, getPlayerTwo, newGame, resetGame};
 })();
