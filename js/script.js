@@ -103,10 +103,14 @@ const displayController = (() => {
     const displayPlayerProfile = (player) => {
         const playerProfile = grabPlayerProfile(player);
         playerProfile.hidden = false;
+        
+        const playerProfileName = playerProfile.querySelector('.player-profile-name');
+        const playerProfileScore = playerProfile.querySelector('.player-profile-score');
+        const playerProfileSymbol = playerProfile.querySelector('.player-profile-symbol');
 
-        displayName(player);
-        displaySymbol(player);
-        displayScore(player);
+        playerProfileName.textContent = player.getName();
+        playerProfileScore.textContent = `Score: ${player.getScore()}`;
+        playerProfileSymbol.textContent = player.getSymbol();
     };
 
     const hidePlayerProfile = (player) => {
@@ -114,26 +118,12 @@ const displayController = (() => {
         playerProfile.hidden = true;
     }
 
-    const displayName = (player) => {
-        const playerProfile = grabPlayerProfile(player);
-
-        const playerProfileName = playerProfile.querySelector('.player-profile-name');
-        playerProfileName.textContent = player.getName();
-    };
-
-    const displayScore = (player) => {
+    const updateScore = (player) => {
         const playerProfile = grabPlayerProfile(player);
 
         const playerProfileScore = playerProfile.querySelector('.player-profile-score');
         playerProfileScore.textContent = `Score: ${player.getScore()}`;
-    };
-
-    const displaySymbol = (player) => {
-        const playerProfile = grabPlayerProfile(player);
-
-        const playerProfileSymbol = playerProfile.querySelector('.player-profile-symbol');
-        playerProfileSymbol.textContent = player.getSymbol();
-    };
+    }
 
     const highlightPlayer = (currentPlayer) => {
         if (currentPlayer.isPlayerOne()) {
@@ -190,7 +180,7 @@ const displayController = (() => {
     }
 
     return {
-        updateBoard, displayName, displayScore, displaySymbol, displayMessage, activateBoard,
+        updateBoard, updateScore, displayMessage, activateBoard,
          getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, 
         resetDisplayBoard, displayNewGameOptions, 
         displayResetGameOptions, hideGameOptions, showStartGameForm,
@@ -275,7 +265,7 @@ const playGame = (() => {
         gameOver = true;
         if (gameOutcomeIsWin) {
             const currentPlayerScore = currentPlayer.giveWinPoint();
-            displayController.displayScore(currentPlayer);
+            displayController.updateScore(currentPlayer);
             gameMessage();
         } else {
             gameMessage();
