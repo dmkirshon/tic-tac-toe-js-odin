@@ -10,6 +10,17 @@ const gameBoard = (() => {
     const board = [...Array(9)];
 
     const getBoard = () => board;
+    const getAvailableSpots = () => {
+        const availableSpots = [];
+
+        board.forEach((spot, index) => {
+            if(isSpotEmpty(spot)) {
+                availableSpots.push(index);
+            }
+        });
+
+        return availableSpots;
+    };
 
     const setSpot = (symbol, location) => { board[location] = symbol; };
 
@@ -36,7 +47,8 @@ const gameBoard = (() => {
         board.forEach((spot, index) => { board[index] = undefined; });
     };
 
-    return { getBoard, setSpot, resetGameBoard, isThreeInARow, isBoardFilled, isSpotEmpty};
+    return { getBoard, getAvailableSpots, setSpot, resetGameBoard, 
+        isThreeInARow, isBoardFilled, isSpotEmpty};
 })();
 
 // player objects
@@ -67,25 +79,118 @@ const computer = (symbol, position, mode) => {
     const prototype = player('Computer', symbol, position);
 
     const computerMove = () => {
-        let chooseMove;
-        const availableMoves = [];
-
-        if(mode === 'easy'){
-            gameBoard.getBoard().forEach((spot, index) => {
-                if(gameBoard.isSpotEmpty(spot)) {
-                    availableMoves.push(index);
-                }
-            });
-        chooseMove = Math.floor(Math.random() * availableMoves.length);
+        if(mode === 'easy') {
+            return easyModeMove();
+        } else if(mode === 'unbeatable') {
+            return unbeatableModeMove();
         }
+    };
 
+    const easyModeMove = () => {
+        let chooseMove;
+        const availableMoves = gameBoard.getAvailableSpots();
+
+        chooseMove = Math.floor(Math.random() * availableMoves.length);
+        
         return availableMoves[chooseMove];
     };
 
+    const unbeatableModeMove = () => {
+        const copyGameBoard = [...gameBoard.getBoard()].map((value, index) => {
+            if(value === undefined) {
+                return index;
+            } else {
+                return value;
+            }
+        });
+
+        const huPlayer = 'x';
+        const aiPlayer = 'o';
+
+        function minimax(reboard, player) {
+            let array = getAvailableSpots(reboard);
+
+            if (winning(reboard, huPlayer)) {
+                return {
+                score: -10
+                };
+            } else if (winning(reboard, aiPlayer)) {
+                return {
+                score: 10
+                };
+            } else if (array.length === 0) {
+                return {
+                score: 0
+                };
+            }
+
+            var moves = [];
+            for (var i = 0; i < array.length; i++) {
+                var move = {};
+                move.index = reboard[array[i]]; // using 0-8 counter in original array
+                reboard[array[i]] = player;
+
+                if (player == aiPlayer) {
+                var g = minimax(reboard, huPlayer);
+                move.score = g.score;
+                } else {
+                var g = minimax(reboard, aiPlayer);
+                move.score = g.score;
+                }
+                reboard[array[i]] = move.index;
+                moves.push(move);
+            }
+
+            var bestMove;
+            if (player === aiPlayer) {
+                var bestScore = -10000;
+                for (var i = 0; i < moves.length; i++) {
+                if (moves[i].score > bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                }
+                }
+            } else {
+                var bestScore = 10000;
+                for (var i = 0; i < moves.length; i++) {
+                if (moves[i].score < bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                }
+                }
+            }
+            return moves[bestMove];
+            
+        };
+
+        const getAvailableSpots = (reboard) => {
+            return reboard.filter(s => s != "x" && s != "o");
+        };    
+
+        function winning(board, player) {
+            if (
+              (board[0] == player && board[1] == player && board[2] == player) ||
+              (board[3] == player && board[4] == player && board[5] == player) ||
+              (board[6] == player && board[7] == player && board[8] == player) ||
+              (board[0] == player && board[3] == player && board[6] == player) ||
+              (board[1] == player && board[4] == player && board[7] == player) ||
+              (board[2] == player && board[5] == player && board[8] == player) ||
+              (board[0] == player && board[4] == player && board[8] == player) ||
+              (board[2] == player && board[4] == player && board[6] == player)
+            ) {
+              return true;
+            } else {
+              return false;
+            }
+        };
+        
+        move = minimax(copyGameBoard, aiPlayer);
+        console.log(move);
+        return move.index;
+    };
     return Object.assign({}, prototype, {isComputer, computerMove});
     
 }
-
 // display object
 
 const displayController = (() => {
@@ -279,7 +384,7 @@ const playGame = (() => {
         playerOne = player(playerOneName, playerOneSymbol, playerOnePosition);
 
         if(displayController.isSelectedOpponentComputer()) {
-            playerTwo = computer(playerTwoSymbol, playerTwoPosition, 'easy');
+            playerTwo = computer(playerTwoSymbol, playerTwoPosition, 'unbeatable');
         } else {
             playerTwo = player(playerTwoName, playerTwoSymbol, playerTwoPosition);
         }
