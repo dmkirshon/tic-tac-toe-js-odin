@@ -6,8 +6,6 @@
 // gameboard object
 // create gameboard, open spots, valid placement
 
-const gameBoardGrid = document.querySelector('.game-board');
-
 const gameBoard = (() => {
     const board = [...Array(9)];
 
@@ -78,6 +76,28 @@ const displayController = (() => {
                 gameBoardGridSpot.textContent = spot;
             }
         });
+    };
+
+    const activateBoard = () => {
+        gameBoardGridSpots.forEach(spot => {
+            if (!(spot.textContent)) {
+                spot.addEventListener('click', selectSpot);
+                spot.classList.add('hoverOnSpot');
+            }
+        });
+    };
+
+    function selectSpot() {
+        const currentPlayer = playGame.getCurrentPlayer();
+
+        gameBoard.setSpot(currentPlayer.getSymbol(), this.getAttribute('data-spot-number'));
+        updateBoard();
+
+        gameBoardGridSpots.forEach(spot => {
+            spot.removeEventListener('click', selectSpot);
+            spot.classList.remove('hoverOnSpot');
+        });
+        playGame.checkRound();
     };
 
     const displayPlayerProfile = (player) => {
@@ -170,7 +190,7 @@ const displayController = (() => {
     }
 
     return {
-        updateBoard, displayName, displayScore, displaySymbol, displayMessage, 
+        updateBoard, displayName, displayScore, displaySymbol, displayMessage, activateBoard,
          getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, 
         resetDisplayBoard, displayNewGameOptions, 
         displayResetGameOptions, hideGameOptions, showStartGameForm,
@@ -204,39 +224,26 @@ const playGame = (() => {
 
         currentPlayer = playerOne;
         otherPlayer = playerTwo;
-        pickSpot();
+        playTurn();
     };
 
-    const pickSpot = () => {
+    const playTurn = () => {
         displayController.highlightPlayer(currentPlayer);
+        displayController.activateBoard();
+    };
 
-        Array.from(gameBoardGrid.children).forEach(spot => {
-            if (!(spot.textContent)) {
-                spot.addEventListener('click', selectSpot);
-                spot.classList.add('hoverOnSpot');
-            }
-        });
-
-        function selectSpot() {
-            gameBoard.setSpot(currentPlayer.getSymbol(), this.getAttribute('data-spot-number'));
-            Array.from(gameBoardGrid.children).forEach(spot => {
-                spot.removeEventListener('click', selectSpot);
-                spot.classList.remove('hoverOnSpot');
-            });
-            displayController.updateBoard();
-
-            if (checkWin()) {
-                gameOutcomeIsWin = true;
-                endGame();
-            } else if (checkTie()) {
-                endGame();
-            } else {
-                const swapPlayer = currentPlayer;
-                currentPlayer = otherPlayer;
-                otherPlayer = swapPlayer;
-                pickSpot();
-            }
-        };
+    const checkRound = () => {
+        if (checkWin()) {
+            gameOutcomeIsWin = true;
+            endGame();
+        } else if (checkTie()) {
+            endGame();
+        } else {
+            const swapPlayer = currentPlayer;
+            currentPlayer = otherPlayer;
+            otherPlayer = swapPlayer;
+            playTurn();
+        }
     };
 
     const checkWin = () => {
@@ -299,7 +306,7 @@ const playGame = (() => {
         displayController.resetDisplayBoard();
         displayController.displayMessage('');
         displayController.hideGameOptions();
-        pickSpot();
+        playTurn();
     };
 
     const resetGame = () => {
@@ -317,6 +324,7 @@ const playGame = (() => {
 
     const getPlayerOne = () => playerOne;
     const getPlayerTwo = () => playerTwo;
+    const getCurrentPlayer = () => currentPlayer;
 
-    return { init, getPlayerOne, getPlayerTwo, newGame, resetGame};
+    return { init, getPlayerOne, getPlayerTwo, getCurrentPlayer, checkRound, newGame, resetGame};
 })();
