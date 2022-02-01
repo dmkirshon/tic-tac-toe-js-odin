@@ -71,7 +71,7 @@ const displayController = (() => {
         playGame.init();
     });
 
-    const drawBoard = () => {
+    const updateBoard = () => {
         gameBoard.getBoard().forEach((spot, i) => {
             if (spot) {
                 const gameBoardGridSpot = gameBoardGridSpots[i];
@@ -170,7 +170,7 @@ const displayController = (() => {
     }
 
     return {
-        drawBoard, displayName, displayScore, displaySymbol, displayMessage, 
+        updateBoard, displayName, displayScore, displaySymbol, displayMessage, 
          getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, 
         resetDisplayBoard, displayNewGameOptions, 
         displayResetGameOptions, hideGameOptions, showStartGameForm,
@@ -223,7 +223,7 @@ const playGame = (() => {
                 spot.removeEventListener('click', selectSpot);
                 spot.classList.remove('hoverOnSpot');
             });
-            displayController.drawBoard();
+            displayController.updateBoard();
 
             if (checkWin()) {
                 gameOutcomeIsWin = true;
