@@ -10,16 +10,31 @@ const gameBoard = (() => {
     const board = [...Array(9)];
 
     const getBoard = () => board;
-    const getOpenSpots = () => { };
-    const getFilledSpots = () => { };
 
     const setSpot = (symbol, location) => { board[location] = symbol; };
 
-    const resetGameBoard = () => {
-        board.forEach((spot, index) => {board[index] = undefined;});
+    const isThreeInARow = () => {
+        if ((board[0] && board[0] === board[1] && board[1] === board[2]) ||
+            (board[0] && board[0] === board[3] && board[3] === board[6]) ||
+            (board[0] && board[0] === board[4] && board[4] === board[8]) ||
+            (board[1] && board[1] === board[4] && board[4] === board[7]) ||
+            (board[2] && board[2] === board[4] && board[4] === board[6]) ||
+            (board[2] && board[2] === board[5] && board[5] === board[8]) ||
+            (board[3] && board[3] === board[4] && board[4] === board[5]) ||
+            (board[6] && board[6] === board[7] && board[7] === board[8])) {
+            return true;
+        } else {
+            return false;
+        }
     };
 
-    return { getBoard, getFilledSpots, getOpenSpots, setSpot, resetGameBoard };
+    const isFilled = () => !(board.includes(undefined));
+
+    const resetGameBoard = () => {
+        board.forEach((spot, index) => { board[index] = undefined; });
+    };
+
+    return { getBoard, setSpot, resetGameBoard, isThreeInARow, isFilled};
 })();
 
 // player objects
@@ -37,8 +52,8 @@ const player = (name, symbol, position) => {
     const giveWinPoint = () => ++score;
     const setPlayerTurn = (turn) => { playerTurn = turn; };
 
-    const isPlayerOne = (player) => position === 1 ? true: false;
-    const isPlayerTwo = (player) => position === 2 ? true: false;
+    const isPlayerOne = (player) => position === 1 ? true : false;
+    const isPlayerTwo = (player) => position === 2 ? true : false;
 
 
     return {
@@ -103,7 +118,7 @@ const displayController = (() => {
     const displayPlayerProfile = (player) => {
         const playerProfile = grabPlayerProfile(player);
         playerProfile.hidden = false;
-        
+
         const playerProfileName = playerProfile.querySelector('.player-profile-name');
         const playerProfileScore = playerProfile.querySelector('.player-profile-score');
         const playerProfileSymbol = playerProfile.querySelector('.player-profile-symbol');
@@ -116,14 +131,14 @@ const displayController = (() => {
     const hidePlayerProfile = (player) => {
         const playerProfile = grabPlayerProfile(player);
         playerProfile.hidden = true;
-    }
+    };
 
     const updateScore = (player) => {
         const playerProfile = grabPlayerProfile(player);
 
         const playerProfileScore = playerProfile.querySelector('.player-profile-score');
         playerProfileScore.textContent = `Score: ${player.getScore()}`;
-    }
+    };
 
     const highlightPlayer = (currentPlayer) => {
         if (currentPlayer.isPlayerOne()) {
@@ -167,24 +182,24 @@ const displayController = (() => {
     };
 
     const resetDisplayBoard = () => {
-        gameBoardGridSpots.forEach(gridSpot => {gridSpot.textContent = '';})
+        gameBoardGridSpots.forEach(gridSpot => { gridSpot.textContent = ''; });
     };
 
     const showStartGameForm = () => {
         startGameForm.hidden = false;
-    }
+    };
 
     const hidePlayerProfiles = () => {
         Array.from(playerOneProfile.children)
             .forEach(profileData => profileData.textContent = '');
         Array.from(playerTwoProfile.children)
             .forEach(profileData => profileData.textContent = '');
-    }
+    };
 
     return {
         updateBoard, updateScore, displayMessage, activateBoard,
-        getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, 
-        resetDisplayBoard,displayGameOptions, hideGameOptions, showStartGameForm,
+        getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer,
+        resetDisplayBoard, displayGameOptions, hideGameOptions, showStartGameForm,
         displayPlayerProfile, hidePlayerProfile
     };
 })();
@@ -238,15 +253,7 @@ const playGame = (() => {
     };
 
     const checkWin = () => {
-        const currentBoard = gameBoard.getBoard();
-        if ((currentBoard[0] && currentBoard[0] === currentBoard[1] && currentBoard[1] === currentBoard[2]) ||
-            (currentBoard[0] && currentBoard[0] === currentBoard[3] && currentBoard[3] === currentBoard[6]) ||
-            (currentBoard[0] && currentBoard[0] === currentBoard[4] && currentBoard[4] === currentBoard[8]) ||
-            (currentBoard[1] && currentBoard[1] === currentBoard[4] && currentBoard[4] === currentBoard[7]) ||
-            (currentBoard[2] && currentBoard[2] === currentBoard[4] && currentBoard[4] === currentBoard[6]) ||
-            (currentBoard[2] && currentBoard[2] === currentBoard[5] && currentBoard[5] === currentBoard[8]) ||
-            (currentBoard[3] && currentBoard[3] === currentBoard[4] && currentBoard[4] === currentBoard[5]) ||
-            (currentBoard[6] && currentBoard[6] === currentBoard[7] && currentBoard[7] === currentBoard[8])) {
+        if (gameBoard.isThreeInARow()) {
             return true;
         } else {
             return false;
@@ -254,11 +261,10 @@ const playGame = (() => {
     };
 
     const checkTie = () => {
-        const currentBoard = gameBoard.getBoard();
-        if (currentBoard.includes(undefined)) {
-            return false;
-        } else {
+        if (gameBoard.isFilled()) {
             return true;
+        } else {
+            return false;
         }
     };
 
@@ -302,7 +308,7 @@ const playGame = (() => {
     const resetGame = () => {
         gameOver = false;
         gameOutcomeIsWin = false;
-        
+
         gameBoard.resetGameBoard();
         displayController.resetDisplayBoard();
         displayController.displayMessage('');
@@ -310,11 +316,11 @@ const playGame = (() => {
         displayController.hidePlayerProfile(playerOne);
         displayController.hidePlayerProfile(playerTwo);
         displayController.showStartGameForm();
-    }
+    };
 
     const getPlayerOne = () => playerOne;
     const getPlayerTwo = () => playerTwo;
     const getCurrentPlayer = () => currentPlayer;
 
-    return { init, getPlayerOne, getPlayerTwo, getCurrentPlayer, checkRound, newGame, resetGame};
+    return { init, getPlayerOne, getPlayerTwo, getCurrentPlayer, checkRound, newGame, resetGame };
 })();
