@@ -156,8 +156,10 @@ const displayController = (() => {
     newGameButton.addEventListener('click', () => playGame.newGame());
     resetGameButton.addEventListener('click', () => playGame.resetGame());
 
-    const displayNewGameOptions = () => newGameButton.hidden = false;
-    const displayResetGameOptions = () => resetGameButton.hidden = false;
+    const displayGameOptions = () => {
+        newGameButton.hidden = false;
+        resetGameButton.hidden = false;
+    };
 
     const hideGameOptions = () => {
         newGameButton.hidden = true;
@@ -181,9 +183,8 @@ const displayController = (() => {
 
     return {
         updateBoard, updateScore, displayMessage, activateBoard,
-         getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, 
-        resetDisplayBoard, displayNewGameOptions, 
-        displayResetGameOptions, hideGameOptions, showStartGameForm,
+        getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer, 
+        resetDisplayBoard,displayGameOptions, hideGameOptions, showStartGameForm,
         displayPlayerProfile, hidePlayerProfile
     };
 })();
@@ -270,8 +271,7 @@ const playGame = (() => {
         } else {
             gameMessage();
         }
-        displayController.displayNewGameOptions();
-        displayController.displayResetGameOptions();
+        displayController.displayGameOptions();
     };
 
     const gameMessage = () => {
