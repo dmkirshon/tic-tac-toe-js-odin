@@ -34,31 +34,27 @@ const gameBoard = (() => {
         board.forEach((spot, index) => { board[index] = undefined; });
     };
 
-    return { getBoard, setSpot, resetGameBoard, isThreeInARow, isFilled};
+    return { getBoard, setSpot, resetGameBoard, isThreeInARow, isFilled };
 })();
 
 // player objects
-// names, x or o, scores, turn
+// names, x or o, scores, position
 const player = (name, symbol, position) => {
     let score = 0;
-    let playerTurn = false;
 
     const getName = () => name;
     const getSymbol = () => symbol;
     const getScore = () => score;
-    const getPlayerTurn = () => playerTurn;
-    const getPlayerPosition = () => position;
 
     const giveWinPoint = () => ++score;
-    const setPlayerTurn = (turn) => { playerTurn = turn; };
 
     const isPlayerOne = (player) => position === 1 ? true : false;
     const isPlayerTwo = (player) => position === 2 ? true : false;
 
 
     return {
-        getName, getPlayerTurn, getScore, getSymbol, getPlayerPosition,
-        giveWinPoint, setPlayerTurn, isPlayerOne, isPlayerTwo
+        getName, getScore, getSymbol,
+        giveWinPoint, isPlayerOne, isPlayerTwo
     };
 };
 
@@ -318,9 +314,7 @@ const playGame = (() => {
         displayController.showStartGameForm();
     };
 
-    const getPlayerOne = () => playerOne;
-    const getPlayerTwo = () => playerTwo;
     const getCurrentPlayer = () => currentPlayer;
 
-    return { init, getPlayerOne, getPlayerTwo, getCurrentPlayer, checkRound, newGame, resetGame };
+    return { init, getCurrentPlayer, checkRound, newGame, resetGame };
 })();
