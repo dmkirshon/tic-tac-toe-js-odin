@@ -193,9 +193,10 @@ const displayController = (() => {
     };
 
     return {
-        updateBoard, updateScore, displayMessage, activateBoard,
+        updateScore, displayMessage, activateBoard,
         getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer,
-        resetDisplayBoard, displayGameOptions, hideGameOptions, showStartGameForm,
+        resetDisplayBoard, showStartGameForm,
+        displayGameOptions, hideGameOptions, 
         displayPlayerProfile, hidePlayerProfile
     };
 })();
