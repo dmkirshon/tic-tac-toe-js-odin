@@ -37,6 +37,11 @@ div {
     margin: 0;
 }
 
+p {
+    padding: 0;
+    margin: 0;
+}
+
 /* Game Area Styles */
 
 .game {
@@ -100,13 +105,26 @@ div {
 .game-controls {
     margin-top: 1em;
     border: 1px solid blue;
+}
+
+.form-start-game {
     text-align: center;
+}
+
+.form-start-game-opponent {
+    font-size: large;
 }
 
 input {
     text-align: center;
     font-size: large;
+    margin-bottom: 1em;
 }
+
+label {
+    font-size: large;
+}
+
 /* Game Messages Styles */
 
 .game-messages {

@@ -28,13 +28,15 @@ const gameBoard = (() => {
         }
     };
 
-    const isFilled = () => !(board.includes(undefined));
+    const isSpotEmpty = (spot) => spot ? false : true;
+    const isBoardFilled = () => !(board.includes(undefined));
+
 
     const resetGameBoard = () => {
         board.forEach((spot, index) => { board[index] = undefined; });
     };
 
-    return { getBoard, setSpot, resetGameBoard, isThreeInARow, isFilled };
+    return { getBoard, setSpot, resetGameBoard, isThreeInARow, isBoardFilled, isSpotEmpty};
 })();
 
 // player objects
@@ -58,11 +60,38 @@ const player = (name, symbol, position) => {
     };
 };
 
+// computer object: type of player
+
+const computer = (symbol, position, mode) => {
+    const isComputer = true;
+    const prototype = player('Computer', symbol, position);
+
+    const computerMove = () => {
+        let chooseMove;
+        const availableMoves = [];
+
+        if(mode === 'easy'){
+            gameBoard.getBoard().forEach((spot, index) => {
+                if(gameBoard.isSpotEmpty(spot)) {
+                    availableMoves.push(index);
+                }
+            });
+        chooseMove = Math.floor(Math.random() * availableMoves.length);
+        }
+
+        return availableMoves[chooseMove];
+    };
+
+    return Object.assign({}, prototype, {isComputer, computerMove});
+    
+}
+
 // display object
 
 const displayController = (() => {
     let inputPlayerOne;
     let inputPlayerTwo;
+    let selectedOpponent;
 
     const gameBoardGridSpots = document.querySelectorAll('.game-board-spot');
     const playerOneProfile = document.querySelector('.player-one-profile');
@@ -70,15 +99,46 @@ const displayController = (() => {
     const startGameForm = document.querySelector('.form-start-game');
     const newGameButton = document.querySelector('.game-controls-new');
     const resetGameButton = document.querySelector('.game-controls-reset');
+    const opponentRadioButton = document.querySelectorAll('input[name="chooseOpponent"]');
+
+    opponentRadioButton.forEach(choice => {
+        choice.addEventListener('click', changePlayerTwo)
+    });
+
+    function changePlayerTwo() {
+        if(this.value === 'computer') {
+            document.getElementById('playerTwo').disabled = true;
+        } else {
+            document.getElementById('playerTwo').disabled = false;
+        }
+    };
 
     startGameForm.addEventListener('submit', (event) => {
         event.preventDefault();
+
         inputPlayerOne = document.getElementById('playerOne').value;
-        inputPlayerTwo = document.getElementById('playerTwo').value;
+
+        opponentRadioButton.forEach(choice => {
+            if(choice.checked) {
+                selectedOpponent = choice.value;
+            }
+        });
+
+        if (!isSelectedOpponentComputer()) {
+            inputPlayerTwo = document.getElementById('playerTwo').value;
+        } else {
+            inputPlayerTwo = selectedOpponent;
+        }
+
         startGameForm.reset();
+        document.getElementById('playerTwo').disabled = false;
         startGameForm.hidden = true;
         playGame.init();
     });
+
+    const getInputtedPlayerOne = () => inputPlayerOne;
+    const getInputtedPlayerTwo = () => inputPlayerTwo;
+    const isSelectedOpponentComputer = () => selectedOpponent === 'computer' ? true : false;
 
     const updateBoard = () => {
         gameBoard.getBoard().forEach((spot, i) => {
@@ -151,9 +211,6 @@ const displayController = (() => {
         messageArea.textContent = message;
     };
 
-    const getInputtedPlayerOne = () => inputPlayerOne;
-    const getInputtedPlayerTwo = () => inputPlayerTwo;
-
     const grabPlayerProfile = (player) => {
         if (player.isPlayerOne()) {
             return playerOneProfile;
@@ -193,9 +250,9 @@ const displayController = (() => {
     };
 
     return {
-        updateScore, displayMessage, activateBoard,
-        getInputtedPlayerOne, getInputtedPlayerTwo, highlightPlayer,
-        resetDisplayBoard, showStartGameForm,
+        updateScore, displayMessage, activateBoard, updateBoard,
+        getInputtedPlayerOne, getInputtedPlayerTwo, isSelectedOpponentComputer,
+        highlightPlayer, resetDisplayBoard, showStartGameForm,
         displayGameOptions, hideGameOptions, 
         displayPlayerProfile, hidePlayerProfile
     };
@@ -220,7 +277,12 @@ const playGame = (() => {
         const playerTwoPosition = 2;
 
         playerOne = player(playerOneName, playerOneSymbol, playerOnePosition);
-        playerTwo = player(playerTwoName, playerTwoSymbol, playerTwoPosition);
+
+        if(displayController.isSelectedOpponentComputer()) {
+            playerTwo = computer(playerTwoSymbol, playerTwoPosition, 'easy');
+        } else {
+            playerTwo = player(playerTwoName, playerTwoSymbol, playerTwoPosition);
+        }
 
         displayController.displayPlayerProfile(playerOne);
         displayController.displayPlayerProfile(playerTwo);
@@ -232,7 +294,14 @@ const playGame = (() => {
 
     const playTurn = () => {
         displayController.highlightPlayer(currentPlayer);
-        displayController.activateBoard();
+
+        if(currentPlayer.isComputer) {
+            gameBoard.setSpot(currentPlayer.getSymbol(), currentPlayer.computerMove());
+            displayController.updateBoard();
+            checkRound();
+        } else {
+            displayController.activateBoard(); 
+        }
     };
 
     const checkRound = () => {
@@ -258,7 +327,7 @@ const playGame = (() => {
     };
 
     const checkTie = () => {
-        if (gameBoard.isFilled()) {
+        if (gameBoard.isBoardFilled()) {
             return true;
         } else {
             return false;

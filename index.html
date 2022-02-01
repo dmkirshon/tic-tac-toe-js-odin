@@ -36,6 +36,13 @@
         </div>
         <div class="game-controls">
             <form class="form-start-game">
+                <div class="form-start-game-opponent">Select your opponent:
+                    <input type="radio" id="humanPlayer" name="chooseOpponent" value="human" checked>
+                    <label for="humanPlayer">Human</label>
+                    <input type="radio" id="computerPlayer" name="chooseOpponent" value="computer">
+                    <label for="computerPlayer">Computer</label> <br>
+                </div>
+
                 <input type='text' id="playerOne" name="playerOne" 
                 placeholder="Player One, x" size="20" required>
                 <input type='text' id="playerTwo" name="playerTwo" 
