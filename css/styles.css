@@ -24,7 +24,6 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    border: 1px black solid;
 }
 
 h1 {
@@ -42,13 +41,28 @@ p {
     margin: 0;
 }
 
+input {
+    text-align: center;
+    font-size: large;
+    margin-bottom: 1em;
+}
+
+label {
+    font-size: large;
+}
+
+button {
+    font-size: large;
+    margin: 1em 0;
+}
+
 /* Game Area Styles */
 
 .game {
+    width: 100vw;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: flex-start;
-    gap: 3em;
 }
 
 .game-player {
@@ -57,6 +71,13 @@ p {
     text-align: center;
     border-radius: 15px;
     border: 2px solid black;
+}
+
+.profile-container {
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
 }
 
 .highlight-player {
@@ -68,9 +89,9 @@ p {
 .game-board {
     width: 300px;
     height: 300px;
+
     display: flex;
     justify-content: center;
-    align-items: center;
     flex-flow: wrap;
 }
 
@@ -104,7 +125,9 @@ p {
 
 .game-controls {
     margin-top: 1em;
-    border: 1px solid blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .form-start-game {
@@ -115,21 +138,14 @@ p {
     font-size: large;
 }
 
-input {
-    text-align: center;
-    font-size: large;
-    margin-bottom: 1em;
-}
-
-label {
-    font-size: large;
+.game-controls-new {
+    margin-right: 1em;
 }
 
 /* Game Messages Styles */
 
 .game-messages {
     margin-top: 1em;
-    border: 1px solid blue;
     text-align: center;
     white-space: pre-line;
 }

@@ -12,10 +12,12 @@
     <div class="wrapper">
         <h1>Tic Tac Toe</h1>
         <div class="game">
-            <div class="game-player player-one-profile" hidden>
-                <div class="player-profile-name"></div>
-                <div class="player-profile-symbol"></div>
-                <div class="player-profile-score"></div>
+            <div class="profile-container">
+                <div class="game-player player-one-profile" hidden>
+                    <div class="player-profile-name"></div>
+                    <div class="player-profile-symbol"></div>
+                    <div class="player-profile-score"></div>
+                </div>
             </div>
             <div class="game-board">
                 <div class="game-board-spot spot0 borderBR" data-spot-number="0"></div>
@@ -28,10 +30,12 @@
                 <div class="game-board-spot spot7 borderR" data-spot-number="7"></div>
                 <div class="game-board-spot spot8" data-spot-number="8"></div>
             </div>
-            <div class="game-player player-two-profile" hidden>
-                <div class="player-profile-name"></div>
-                <div class="player-profile-symbol"></div>
-                <div class="player-profile-score"></div>
+            <div class="profile-container">
+                <div class="game-player player-two-profile" hidden>
+                    <div class="player-profile-name"></div>
+                    <div class="player-profile-symbol"></div>
+                    <div class="player-profile-score"></div>
+                </div>
             </div>
         </div>
         <div class="game-controls">
@@ -53,7 +57,7 @@
             <button class="game-controls-new" hidden>New Game</button>
             <button class="game-controls-reset" hidden>Reset Game</button>
         </div>
-        <div class="game-messages">Messages</div>
+        <div class="game-messages"></div>
     </div>
 </body>
 </html>
