@@ -104,9 +104,9 @@ const computer = (symbol, position, mode) => {
             }
         });
 
-        const huPlayer = 'x';
-        const aiPlayer = 'o';
-
+        const huPlayer = playGame.getFirstPlayer().getSymbol();
+        const aiPlayer = playGame.getSecondPlayer().getSymbol();
+        // https://www.freecodecamp.org/news/how-to-make-your-tic-tac-toe-game-unbeatable-by-using-the-minimax-algorithm-9d690bad4b37/
         function minimax(reboard, player) {
             let array = getAvailableSpots(reboard);
 
@@ -124,35 +124,35 @@ const computer = (symbol, position, mode) => {
                 };
             }
 
-            var moves = [];
-            for (var i = 0; i < array.length; i++) {
-                var move = {};
+            const moves = [];
+            for (let i = 0; i < array.length; i++) {
+                let move = {};
                 move.index = reboard[array[i]]; // using 0-8 counter in original array
                 reboard[array[i]] = player;
 
                 if (player == aiPlayer) {
-                var g = minimax(reboard, huPlayer);
+                let g = minimax(reboard, huPlayer);
                 move.score = g.score;
                 } else {
-                var g = minimax(reboard, aiPlayer);
+                let g = minimax(reboard, aiPlayer);
                 move.score = g.score;
                 }
                 reboard[array[i]] = move.index;
                 moves.push(move);
             }
 
-            var bestMove;
+            let bestMove;
             if (player === aiPlayer) {
-                var bestScore = -10000;
-                for (var i = 0; i < moves.length; i++) {
+                let bestScore = -10000;
+                for (let i = 0; i < moves.length; i++) {
                 if (moves[i].score > bestScore) {
                     bestScore = moves[i].score;
                     bestMove = i;
                 }
                 }
             } else {
-                var bestScore = 10000;
-                for (var i = 0; i < moves.length; i++) {
+                let bestScore = 10000;
+                for (let i = 0; i < moves.length; i++) {
                 if (moves[i].score < bestScore) {
                     bestScore = moves[i].score;
                     bestMove = i;
@@ -167,16 +167,16 @@ const computer = (symbol, position, mode) => {
             return reboard.filter(s => s != "x" && s != "o");
         };    
 
-        function winning(board, player) {
+        function winning(board, playerSymbol) {
             if (
-              (board[0] == player && board[1] == player && board[2] == player) ||
-              (board[3] == player && board[4] == player && board[5] == player) ||
-              (board[6] == player && board[7] == player && board[8] == player) ||
-              (board[0] == player && board[3] == player && board[6] == player) ||
-              (board[1] == player && board[4] == player && board[7] == player) ||
-              (board[2] == player && board[5] == player && board[8] == player) ||
-              (board[0] == player && board[4] == player && board[8] == player) ||
-              (board[2] == player && board[4] == player && board[6] == player)
+              (board[0] == playerSymbol && board[1] == playerSymbol && board[2] == playerSymbol) ||
+              (board[3] == playerSymbol && board[4] == playerSymbol && board[5] == playerSymbol) ||
+              (board[6] == playerSymbol && board[7] == playerSymbol && board[8] == playerSymbol) ||
+              (board[0] == playerSymbol && board[3] == playerSymbol && board[6] == playerSymbol) ||
+              (board[1] == playerSymbol && board[4] == playerSymbol && board[7] == playerSymbol) ||
+              (board[2] == playerSymbol && board[5] == playerSymbol && board[8] == playerSymbol) ||
+              (board[0] == playerSymbol && board[4] == playerSymbol && board[8] == playerSymbol) ||
+              (board[2] == playerSymbol && board[4] == playerSymbol && board[6] == playerSymbol)
             ) {
               return true;
             } else {
@@ -185,7 +185,6 @@ const computer = (symbol, position, mode) => {
         };
         
         move = minimax(copyGameBoard, aiPlayer);
-        console.log(move);
         return move.index;
     };
     return Object.assign({}, prototype, {isComputer, computerMove});
@@ -490,6 +489,8 @@ const playGame = (() => {
     };
 
     const getCurrentPlayer = () => currentPlayer;
+    const getFirstPlayer = () => playerOne;
+    const getSecondPlayer = () => playerTwo;
 
-    return { init, getCurrentPlayer, checkRound, newGame, resetGame };
+    return { init, getCurrentPlayer, getFirstPlayer, getSecondPlayer, checkRound, newGame, resetGame };
 })();
